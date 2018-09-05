@@ -1,6 +1,4 @@
-# First Chapter: ByteBuf
-
-## ByteBuf
+# First Chapter: AbstractByteBuf&ByteBuf
 
 ### ![](/assets/ByteBuf.jpg)
 
@@ -153,7 +151,7 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
         }
         return this;
     }
-    
+
     protected final void adjustMarkers(int decrement) {
         int markedReaderIndex = this.markedReaderIndex;
         if (markedReaderIndex <= decrement) {
