@@ -32,11 +32,19 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
 
 所有ByteBuf共享同一个leakDetector检测对象是否泄露
 
-```
+### 读操作
+
+### 写操作
 
 ```
-
-## 
+    @Override
+    public ByteBuf writeBytes(byte[] src, int srcIndex, int length) {
+        ensureWritable(length);
+        setBytes(writerIndex, src, srcIndex, length);
+        writerIndex += length;
+        return this;
+    }
+```
 
 
 
