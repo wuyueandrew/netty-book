@@ -135,6 +135,25 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
 ### 重用缓冲区
 
 ```java
+    @Override
+    public ByteBuf discardReadBytes() {
+        ensureAccessible();
+        if (readerIndex == 0) {
+            return this;
+        }
+
+        if (readerIndex != writerIndex) {
+            setBytes(0, this, readerIndex, writerIndex - readerIndex);
+            writerIndex -= readerIndex;
+            adjustMarkers(readerIndex);
+            readerIndex = 0;
+        } else {
+            adjustMarkers(readerIndex);
+            writerIndex = readerIndex = 0;
+        }
+        return this;
+    }
+    
     protected final void adjustMarkers(int decrement) {
         int markedReaderIndex = this.markedReaderIndex;
         if (markedReaderIndex <= decrement) {
