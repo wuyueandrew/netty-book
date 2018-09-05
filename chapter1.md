@@ -120,8 +120,10 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
 
         return Math.min(newCapacity, maxCapacity);
     }
-
 ```
 
+1. 判断写入后最小长度minNewCapacity，如果不合法（小于0或大于最大长度maxCapacity），抛异常。
+2. 设置阈值threshold为4MB，如果minNewCapacity等于threshold，返回threshold。
+3. 
 
 
