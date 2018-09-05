@@ -36,7 +36,7 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
 
 ### 写操作
 
-```
+```java
     @Override
     public ByteBuf writeBytes(byte[] src, int srcIndex, int length) {
         ensureWritable(length);
@@ -44,6 +44,36 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
         writerIndex += length;
         return this;
     }
+    
+    @Override
+    public ByteBuf ensureWritable(int minWritableBytes) {
+        if (minWritableBytes < 0) {
+            throw new IllegalArgumentException(String.format(
+                    "minWritableBytes: %d (expected: >= 0)", minWritableBytes));
+        }
+        ensureWritable0(minWritableBytes);
+        return this;
+    }
+
+    final void ensureWritable0(int minWritableBytes) {
+        ensureAccessible();
+        if (minWritableBytes <= writableBytes()) {
+            return;
+        }
+
+        if (minWritableBytes > maxCapacity - writerIndex) {
+            throw new IndexOutOfBoundsException(String.format(
+                    "writerIndex(%d) + minWritableBytes(%d) exceeds maxCapacity(%d): %s",
+                    writerIndex, minWritableBytes, maxCapacity, this));
+        }
+
+        // Normalize the current capacity to the power of 2.
+        int newCapacity = alloc().calculateNewCapacity(writerIndex + minWritableBytes, maxCapacity);
+
+        // Adjust to the new capacity.
+        capacity(newCapacity);
+    }
+    
 ```
 
 
