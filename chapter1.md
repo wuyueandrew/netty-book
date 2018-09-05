@@ -17,6 +17,8 @@
 
 ## AbstractByteBuf
 
+### 主要成员变量
+
 ```java
 static final ResourceLeakDetector<ByteBuf> leakDetector =
             ResourceLeakDetectorFactory.instance().newResourceLeakDetector(ByteBuf.class);
@@ -30,7 +32,9 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
 
 所有ByteBuf共享同一个leakDetector检测对象是否泄露
 
-## AbstractReferenceCountedByteBuf
+```
+
+```
 
 ## 
 
