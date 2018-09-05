@@ -44,7 +44,7 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
         writerIndex += length;
         return this;
     }
-    
+
     @Override
     public ByteBuf ensureWritable(int minWritableBytes) {
         if (minWritableBytes < 0) {
@@ -73,8 +73,12 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
         // Adjust to the new capacity.
         capacity(newCapacity);
     }
-    
 ```
+
+Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能。分析写入如下：
+
+1. 先判断待写入长度minWritableBytes，如果不合法（小于0），抛异常。
+2. 进入方法ensureWritable0
 
 
 
