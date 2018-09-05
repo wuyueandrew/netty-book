@@ -28,11 +28,7 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
     private int maxCapacity;
 ```
 
-
-
 所有ByteBuf共享同一个leakDetector检测对象是否泄露
-
-
 
 ## AbstractReferenceCountedByteBuf
 
