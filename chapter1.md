@@ -124,7 +124,7 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
 
 1. 判断写入后最小长度minNewCapacity，如果不合法（小于0或大于最大长度maxCapacity），抛异常。
 2. 设置阈值threshold为4MB，如果minNewCapacity等于threshold，返回threshold。
-3. 如果minNewCapacity大于阈值threshold，按照每次4MB步进扩容，直至达到最大容量maxCapacity。 
+3. 如果minNewCapacity大于阈值threshold，按照每次4MB步进扩容，直至达到最大容量maxCapacity。
 
 4. 如果minNewCapacity小于阈值threshold，从64开始倍增扩容。
 
@@ -133,6 +133,24 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
 ### 操作索引
 
 ### 重用缓冲区
+
+```java
+    protected final void adjustMarkers(int decrement) {
+        int markedReaderIndex = this.markedReaderIndex;
+        if (markedReaderIndex <= decrement) {
+            this.markedReaderIndex = 0;
+            int markedWriterIndex = this.markedWriterIndex;
+            if (markedWriterIndex <= decrement) {
+                this.markedWriterIndex = 0;
+            } else {
+                this.markedWriterIndex = markedWriterIndex - decrement;
+            }
+        } else {
+            this.markedReaderIndex = markedReaderIndex - decrement;
+            markedWriterIndex -= decrement;
+        }
+    }
+```
 
 
 
