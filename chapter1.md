@@ -82,5 +82,46 @@ Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能�
 3. 判断minWritableBytes + 已写入长度writerIndex，如果大于最大容量maxCapacity，抛异常。
 4. 扩容，扩容代码如下。
 
+#### 扩容
+
+```java
+    @Override
+    public int calculateNewCapacity(int minNewCapacity, int maxCapacity) {
+        if (minNewCapacity < 0) {
+            throw new IllegalArgumentException("minNewCapacity: " + minNewCapacity + " (expected: 0+)");
+        }
+        if (minNewCapacity > maxCapacity) {
+            throw new IllegalArgumentException(String.format(
+                    "minNewCapacity: %d (expected: not greater than maxCapacity(%d)",
+                    minNewCapacity, maxCapacity));
+        }
+        final int threshold = CALCULATE_THRESHOLD; // 4 MiB page
+
+        if (minNewCapacity == threshold) {
+            return threshold;
+        }
+
+        // If over threshold, do not double but just increase by threshold.
+        if (minNewCapacity > threshold) {
+            int newCapacity = minNewCapacity / threshold * threshold;
+            if (newCapacity > maxCapacity - threshold) {
+                newCapacity = maxCapacity;
+            } else {
+                newCapacity += threshold;
+            }
+            return newCapacity;
+        }
+
+        // Not over threshold. Double up to 4 MiB, starting from 64.
+        int newCapacity = 64;
+        while (newCapacity < minNewCapacity) {
+            newCapacity <<= 1;
+        }
+
+        return Math.min(newCapacity, maxCapacity);
+    }
+
+```
+
 
 
