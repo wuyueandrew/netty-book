@@ -78,7 +78,9 @@ static final ResourceLeakDetector<ByteBuf> leakDetector =
 Netty的ByteBuf的优势在于可以动态扩容，而JDK的ByteBuffer并不能。分析写入如下：
 
 1. 先判断待写入长度minWritableBytes，如果不合法（小于0），抛异常。
-2. 进入方法ensureWritable0
+2. 进入方法ensureWritable0，如果minWritableBytes小于剩余可写入长度，返回。
+3. 判断minWritableBytes + 已写入长度writerIndex，如果大于最大容量maxCapacity，抛异常。
+4. 扩容，扩容代码如下。
 
 
 
