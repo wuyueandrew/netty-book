@@ -1,4 +1,4 @@
-# First Chapter: AbstractByteBuf&ByteBuf
+# AbstractByteBuf&ByteBuf
 
 ### ![](/assets/ByteBuf.jpg)
 
